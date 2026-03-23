@@ -1,6 +1,34 @@
 import java.util.HashMap;
 import java.util.Map;
 
+abstract class Room {
+    public abstract void displayRoomDetails();
+}
+
+class SingleRoom extends Room {
+    public void displayRoomDetails() {
+        System.out.println("Room Type: Single");
+        System.out.println("Capacity: 1 person");
+        System.out.println("Price: $50/night");
+    }
+}
+
+class DoubleRoom extends Room {
+    public void displayRoomDetails() {
+        System.out.println("Room Type: Double");
+        System.out.println("Capacity: 2 persons");
+        System.out.println("Price: $80/night");
+    }
+}
+
+class SuiteRoom extends Room {
+    public void displayRoomDetails() {
+        System.out.println("Room Type: Suite");
+        System.out.println("Capacity: 4 persons");
+        System.out.println("Price: $150/night");
+    }
+}
+
 class RoomInventory {
     private final Map<String, Integer> roomAvailability;
 
@@ -21,30 +49,6 @@ class RoomInventory {
 
     public void updateAvailability(String roomType, int count) {
         roomAvailability.put(roomType, count);
-    }
-}
-
-class SingleRoom {
-    public void displayRoomDetails() {
-        System.out.println("Room Type: Single");
-        System.out.println("Capacity: 1 person");
-        System.out.println("Price: $50/night");
-    }
-}
-
-class DoubleRoom {
-    public void displayRoomDetails() {
-        System.out.println("Room Type: Double");
-        System.out.println("Capacity: 2 persons");
-        System.out.println("Price: $80/night");
-    }
-}
-
-class SuiteRoom {
-    public void displayRoomDetails() {
-        System.out.println("Room Type: Suite");
-        System.out.println("Capacity: 4 persons");
-        System.out.println("Price: $150/night");
     }
 }
 
