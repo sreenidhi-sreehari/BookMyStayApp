@@ -1,87 +1,67 @@
 import java.util.*;
-import java.io.*;
 
 public class BookMyStayApp {
 
-    static class RoomInventory {
-        private Map<String, Integer> rooms;
+    static class Service {
+        private String serviceName;
+        private double cost;
 
-        public RoomInventory() {
-            rooms = new HashMap<>();
-            rooms.put("Single", 5);
-            rooms.put("Double", 3);
-            rooms.put("Suite", 2);
+        public Service(String serviceName, double cost) {
+            this.serviceName = serviceName;
+            this.cost = cost;
         }
 
-        public Map<String, Integer> getRooms() {
-            return rooms;
+        public String getServiceName() {
+            return serviceName;
         }
 
-        public void setRoom(String type, int count) {
-            rooms.put(type, count);
-        }
-
-        public void display() {
-            System.out.println("Current Inventory:");
-            for (String key : rooms.keySet()) {
-                System.out.println(key + ": " + rooms.get(key));
-            }
+        public double getCost() {
+            return cost;
         }
     }
 
-    static class FilePersistenceService {
+    static class AddOnServiceManager {
+        private Map<String, List<Service>> servicesByReservation;
 
-        public void saveInventory(RoomInventory inventory, String filePath) {
-            try {
-                BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
-                for (Map.Entry<String, Integer> entry : inventory.getRooms().entrySet()) {
-                    writer.write(entry.getKey() + "=" + entry.getValue());
-                    writer.newLine();
-                }
-                writer.close();
-                System.out.println("Inventory saved successfully.");
-            } catch (IOException e) {
-                System.out.println("Error saving inventory.");
-            }
+        public AddOnServiceManager() {
+            servicesByReservation = new HashMap<>();
         }
 
-        public void loadInventory(RoomInventory inventory, String filePath) {
-            File file = new File(filePath);
-            if (!file.exists()) {
-                System.out.println("No valid inventory data found. Starting fresh.");
-                return;
+        public void addService(String reservationId, Service service) {
+            if (!servicesByReservation.containsKey(reservationId)) {
+                servicesByReservation.put(reservationId, new ArrayList<>());
             }
+            servicesByReservation.get(reservationId).add(service);
+        }
 
-            try {
-                BufferedReader reader = new BufferedReader(new FileReader(filePath));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] parts = line.split("=");
-                    if (parts.length == 2) {
-                        inventory.setRoom(parts[0], Integer.parseInt(parts[1]));
-                    }
+        public double calculateTotalServiceCost(String reservationId) {
+            double total = 0;
+            if (servicesByReservation.containsKey(reservationId)) {
+                for (Service s : servicesByReservation.get(reservationId)) {
+                    total += s.getCost();
                 }
-                reader.close();
-            } catch (IOException e) {
-                System.out.println("Error loading inventory.");
             }
+            return total;
         }
     }
 
     public static void main(String[] args) {
+        AddOnServiceManager manager = new AddOnServiceManager();
 
-        String filePath = "inventory.txt";
+        String reservationId = "Single-1";
 
-        RoomInventory inventory = new RoomInventory();
-        FilePersistenceService service = new FilePersistenceService();
+        Service s1 = new Service("Breakfast", 500);
+        Service s2 = new Service("Spa", 700);
+        Service s3 = new Service("Airport Pickup", 300);
 
-        System.out.println("System Recovery");
+        manager.addService(reservationId, s1);
+        manager.addService(reservationId, s2);
+        manager.addService(reservationId, s3);
 
-        service.loadInventory(inventory, filePath);
+        double total = manager.calculateTotalServiceCost(reservationId);
 
-        System.out.println();
-        inventory.display();
-
-        service.saveInventory(inventory, filePath);
+        System.out.println("Add-on Service Selection");
+        System.out.println("Reservation ID: " + reservationId);
+        System.out.println("Total Add-On Cost: " + total);
     }
 }
